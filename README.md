@@ -14,6 +14,11 @@ We will go over data processing steps, augmentation technique and training detai
 
 We used annotated vehicle data set provided by [Udacity](https://www.udacity.com/). The [4.5 GB data set](https://github.com/udacity/self-driving-car/tree/master/annotation) was composed of frames collected from two of videos while driving the Udacity car around Mountain View area in heavy traffic. The data set contained a label file with bounding boxes marking other cars, trucks and pedestrians. The entire data set was comprised of about 22000 images. We combined cars and trucks into one class vehicle, and dropped all the bounding boxes for pedestrians. Mainly because the number of cars far exceeded the number of trucks and pedestrians in the data set.
 
+To run the codes in this notebook, download all the   [Udacity's 4.5 GB data set](https://github.com/udacity/self-driving-car/tree/master/annotation) and place them in the same folders as all the files. 
+
+- Run [main_car_Unet_train_IoU.ipynb](https://github.com/vxy10/p5_VehicleDetection_Unet/blob/master/main_car_Unet_train_IoU.ipynb) to train U-net
+- Run [main_lane_markings_subm2.ipynb](https://github.com/vxy10/p5_VehicleDetection_Unet/blob/master/main_lane_markings_subm2.ipynb) to run detection on vehicle
+
 
 ##### IMPORTANT: The xmin, xmax, ymin and ymax values were marked incorrectly in the Udacity data, so I corrected them. This correction can be found in the code block where data frames are defined. Further, as data from two sources are combined, the column names were modified to match.
 
@@ -21,6 +26,8 @@ We used annotated vehicle data set provided by [Udacity](https://www.udacity.com
 ### Data preparation and augmentation
 
 We first divided the data into training and testing data sets. As the frames were obtained from a video feed, each frame was dependent upon the previous frames, we therefore last 2000 images for testing, and remaining images for training. We then performed augmentation on training data set. We performed only 3 augmentation in this project. These were stretching, translation and brightness augmentation. We specifically chose these three transformations to preserve the rectangular shape of the bounding boxes. Another interesting augmentation we considered was to flip the images about the vertical axis randomly, however we decided against it. For those interested, flipping data in Left side drive system (like US) is an easy way to transform data to traffic patterns expected in India or other countries that follow right side drive system.
+
+
 
 
 #### Stretching:
@@ -126,7 +133,7 @@ Finally to test how well the model generalizes to unseen data, we ran the U-net 
 
 ### Applying on video
 
-In a final step, we applied U-net on project video. To remove false positives, we averaged outputs of the Unet from 10 previous frames, and thresholded them at 240 pixel intensity. This method resulted in removal of falst positives, but increased the response time of the network. The videos below present performance on project and challenge videos.
+In a final step, we applied U-net on project video. To remove false positives, we averaged outputs of the Unet from 10 previous frames, and thresholded them at 240 pixel intensity, further all bounding boxes with widths or heights below 40 pixels were removed. This method resulted in removal of false positives, but increased the response time of the network. The videos below present performance on project and challenge videos.
 
 
 #### Project videos
